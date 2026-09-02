@@ -1,0 +1,130 @@
+# ==============================================================================
+# MSCA Cricket App - Unified Master .gitignore (Root, Frontend, Backend, Mobile)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. OS & System Files
+# ------------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ------------------------------------------------------------------------------
+# 2. IDE & Editor Configurations
+# ------------------------------------------------------------------------------
+.idea/
+.gemini/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+*.sw?
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ------------------------------------------------------------------------------
+# 3. Dependencies & Package Managers
+# ------------------------------------------------------------------------------
+node_modules/
+*/node_modules/
+.pnp
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# ------------------------------------------------------------------------------
+# 4. Logs & Debugging
+# ------------------------------------------------------------------------------
+logs/
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ------------------------------------------------------------------------------
+# 5. Environment Variables & Secrets (Keep .env.example tracked)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
+!*/.env.example
+
+# ------------------------------------------------------------------------------
+# 6. Web & Frontend Build Artifacts (Vite / React)
+# ------------------------------------------------------------------------------
+dist/
+*/dist/
+dist-ssr/
+build/
+*/build/
+out/
+.vite/
+*.tsbuildinfo
+
+# ------------------------------------------------------------------------------
+# 7. Mobile & Expo / React Native Artifacts (marathishala-mobile)
+# ------------------------------------------------------------------------------
+.expo/
+*/.expo/
+web-build/
+expo-env.d.ts
+.metro-health-check*
+
+# Expo / React Native generated native folders
+ios/
+android/
+*/ios/
+*/android/
+/marathishala-mobile/ios/
+/marathishala-mobile/android/
+
+# Mobile Security Keys & Certificates
+*.jks
+*.p8
+*.p12
+*.key
+*.pem
+*.keystore
+*.mobileprovision
+.kotlin/
+*.orig.*
+
+# Android / iOS compiled binaries
+*.apk
+*.aab
+*.ipa
+*.app
+
+# ------------------------------------------------------------------------------
+# 8. Testing & Coverage
+# ------------------------------------------------------------------------------
+coverage/
+*/coverage/
+.nyc_output/
+.cache/
+
+# ------------------------------------------------------------------------------
+# 9. Temporary & Scratch Files
+# ------------------------------------------------------------------------------
+.tmp/
+tmp/
+temp/

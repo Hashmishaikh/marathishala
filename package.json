@@ -1,14 +1,17 @@
 {
   "name": "msca",
   "version": "1.0.0",
-  "description": "this is the appliaction backend for cricket score",
+  "description": "MarathiShala Cricket Association (MSCA) Full-Stack Application",
   "license": "ISC",
   "author": "Dungeon Master",
   "type": "commonjs",
   "main": "backend/server.js",
   "scripts": {
     "start": "node ./backend/server.js",
+    "server": "node ./backend/server.js",
     "dev": "nodemon ./backend/server.js",
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
+    "render-build": "npm install && npm --prefix frontend install && npm --prefix frontend run build",
     "seed": "node ./backend/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

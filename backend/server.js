@@ -24,6 +24,7 @@ connectDB();
 
 const app = express();
 const server = http.createServer(app);
+const __dirnames = path.resolve();
 
 // Initialize Socket.io
 const io = new Server(server, {
@@ -55,41 +56,56 @@ app.use('/api/matches', matchRoutes);
 app.use('/api/score', scoreRoutes);
 
 // Frontend Static Production Serving
-const frontendDistPath = path.join(__dirname, '../frontend/dist');
+// const frontendDistPath = path.join(__dirname, '../frontend/dist');
 const isFrontendBuilt = fs.existsSync(frontendDistPath);
 
-if (process.env.NODE_ENV === 'production' || isFrontendBuilt) {
-    // Serve static frontend assets
-    app.use(express.static(frontendDistPath));
+// if (process.env.NODE_ENV === 'production' || isFrontendBuilt) {
+//     // Serve static frontend assets
+//     app.use(express.static(frontendDistPath));
 
-    // Handle React SPA client-side routing (fallback to index.html for non-API routes)
-    app.use((req, res) => {
-        if (req.originalUrl.startsWith('/api')) {
-            return res.status(404).json({ message: 'API route not found' });
+//     // Handle React SPA client-side routing (fallback to index.html for non-API routes)
+//     app.use((req, res) => {
+//         if (req.originalUrl.startsWith('/api')) {
+//             return res.status(404).json({ message: 'API route not found' });
+//         }
+//         res.sendFile(path.join(frontendDistPath, 'index.html'));
+//     });
+// } else {
+//     // Development Root Route (API info when frontend is not built in backend dir)
+//     app.get('/', (req, res) => {
+//         res.json({
+//             status: 'online',
+//             project: 'MSCA — Marathishala Cricket Association API',
+//             version: '1.0.0',
+//             endpoints: {
+//                 series: '/api/series',
+//                 teams: '/api/teams',
+//                 players: '/api/players',
+//                 matches: '/api/matches',
+//                 score: '/api/score',
+//                 health: '/api/health'
+//             },
+//             compassConnection: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/msca'
+//         });
+//     });
+// }
+
+// Global Error Handler
+
+// Serve static files and handle frontend routes
+
+// Only serve static files in production
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirnames, '../frontend/dist')));
+
+    app.get('*', (req, res) => {
+        // Only handle non-API routes with frontend
+        if (!req.path.startsWith('/api/')) {
+            res.sendFile(path.join(__dirnames, 'frontend', 'dist', 'index.html'));
         }
-        res.sendFile(path.join(frontendDistPath, 'index.html'));
-    });
-} else {
-    // Development Root Route (API info when frontend is not built in backend dir)
-    app.get('/', (req, res) => {
-        res.json({
-            status: 'online',
-            project: 'MSCA — Marathishala Cricket Association API',
-            version: '1.0.0',
-            endpoints: {
-                series: '/api/series',
-                teams: '/api/teams',
-                players: '/api/players',
-                matches: '/api/matches',
-                score: '/api/score',
-                health: '/api/health'
-            },
-            compassConnection: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/msca'
-        });
     });
 }
 
-// Global Error Handler
 app.use((err, req, res, next) => {
     console.error('Unhandled Error:', err.stack);
     res.status(500).json({

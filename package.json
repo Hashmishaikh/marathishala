@@ -10,7 +10,7 @@
     "start": "node ./backend/server.js",
     "server": "node ./backend/server.js",
     "dev": "nodemon ./backend/server.js",
-    "build": "npm install && npm --prefix frontend install && npm run build --prefix frontend",
+    "build": "npm install --include=dev && npm --prefix frontend install --include=dev && npm run build --prefix frontend",
     "seed": "node ./backend/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

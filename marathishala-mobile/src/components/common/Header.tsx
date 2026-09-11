@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface HeaderProps {
@@ -27,8 +27,13 @@ export const Header: React.FC<HeaderProps> = ({
       <View style={styles.topRow} className="flex-row items-center justify-between">
         {/* Brand & Badge */}
         <View style={styles.brandRow} className="flex-row items-center gap-2">
+          <Image
+            source={require('@/assets/images/logo.png')}
+            style={styles.brandLogoImage}
+            resizeMode="contain"
+          />
           <Text style={styles.brandLogo} className="text-white text-lg font-black tracking-wide">
-            🏏 MSCA
+            MSCA
           </Text>
           <View style={styles.badgePro} className="bg-sky-500/15 px-2 py-0.5 rounded-md border border-sky-500">
             <Text style={styles.badgeProText} className="text-sky-400 text-[10px] font-black tracking-wider">
@@ -136,6 +141,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  brandLogoImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 7,
   },
   brandLogo: {
     color: '#ffffff',

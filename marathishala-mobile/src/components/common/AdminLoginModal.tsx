@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Image,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -63,9 +64,11 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
           <View style={styles.header}>
-            <View style={styles.lockIconBox}>
-              <MaterialCommunityIcons name="shield-lock-outline" size={28} color="#38bdf8" />
-            </View>
+            <Image
+              source={require('@/assets/images/logo.png')}
+              style={styles.modalLogo}
+              resizeMode="contain"
+            />
             <Text style={styles.title}>Admin Access Required</Text>
             <Text style={styles.subtitle}>Enter 4-digit PIN to unlock Scorer & Admin tools</Text>
           </View>
@@ -153,16 +156,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  lockIconBox: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#0c2444',
-    alignItems: 'center',
-    justifyContent: 'center',
+  modalLogo: {
+    width: 60,
+    height: 60,
+    borderRadius: 14,
     marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#0284c7',
   },
   title: {
     color: '#ffffff',

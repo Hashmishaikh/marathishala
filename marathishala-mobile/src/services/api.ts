@@ -16,21 +16,27 @@ const getDefaultHost = () => {
   return 'http://localhost:5001';
 };
 
-let currentBaseUrl = process.env.EXPO_PUBLIC_API_URL || `${getDefaultHost()}/api`;
-let currentSocketUrl = process.env.EXPO_PUBLIC_SOCKET_URL || getDefaultHost();
+const sanitizeApiUrl = (url?: string) => {
+  if (!url) return `${getDefaultHost()}/api`;
+  let cleaned = url.trim().replace(/\/$/, '');
+  return cleaned.endsWith('/api') ? cleaned : `${cleaned}/api`;
+};
+
+const sanitizeSocketUrl = (url?: string) => {
+  if (!url) return getDefaultHost();
+  let cleaned = url.trim().replace(/\/$/, '');
+  return cleaned.replace(/\/api$/, '');
+};
+
+let currentBaseUrl = sanitizeApiUrl(process.env.EXPO_PUBLIC_API_URL);
+let currentSocketUrl = sanitizeSocketUrl(process.env.EXPO_PUBLIC_SOCKET_URL || process.env.EXPO_PUBLIC_API_URL);
 
 export const getApiBaseUrl = () => currentBaseUrl;
 export const getSocketUrl = () => currentSocketUrl;
 
 export const setApiBaseUrl = (newUrl: string) => {
-  let cleaned = newUrl.trim().replace(/\/$/, '');
-  if (!cleaned.endsWith('/api')) {
-    currentSocketUrl = cleaned;
-    currentBaseUrl = `${cleaned}/api`;
-  } else {
-    currentBaseUrl = cleaned;
-    currentSocketUrl = cleaned.replace(/\/api$/, '');
-  }
+  currentBaseUrl = sanitizeApiUrl(newUrl);
+  currentSocketUrl = sanitizeSocketUrl(newUrl);
   apiClient.defaults.baseURL = currentBaseUrl;
 };
 

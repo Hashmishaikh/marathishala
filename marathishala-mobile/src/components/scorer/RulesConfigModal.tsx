@@ -86,7 +86,7 @@ export const RulesConfigModal: React.FC<RulesConfigModalProps> = ({
                   onPress={() => setRules({ ...rules, widePenaltyRuns: r })}
                 >
                   <Text style={[styles.choiceBtnText, rules.widePenaltyRuns === r && styles.choiceBtnTextActive]}>
-                    +{r} Runs
+                    {r === 0 ? '+0 (Re-bowl)' : r === 1 ? '+1 (Standard)' : '+2 Runs'}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -102,7 +102,7 @@ export const RulesConfigModal: React.FC<RulesConfigModalProps> = ({
                   onPress={() => setRules({ ...rules, noBallPenaltyRuns: r })}
                 >
                   <Text style={[styles.choiceBtnText, rules.noBallPenaltyRuns === r && styles.choiceBtnTextActive]}>
-                    +{r} Runs
+                    {r === 0 ? '+0 (Free Hit)' : r === 1 ? '+1 (Standard)' : '+2 Runs'}
                   </Text>
                 </TouchableOpacity>
               ))}

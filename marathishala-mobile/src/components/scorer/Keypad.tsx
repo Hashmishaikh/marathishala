@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface KeypadProps {
   onScoreRuns: (runs: number) => void;
-  onScoreExtra: (extraType: 'Wide' | 'NoBall' | 'Bye' | 'LegBye', runningRuns?: number) => void;
+  onScoreExtra: (extraType: 'Wide' | 'NoBall' | 'Bye' | 'LegBye', runningRuns?: number, runsOffBat?: number) => void;
   onOpenWicketModal: () => void;
   onOpenExtrasModal: () => void;
   onUndo: () => void;
@@ -25,6 +25,27 @@ export const Keypad: React.FC<KeypadProps> = ({
   widePenaltyRuns = 1,
   noBallPenaltyRuns = 1,
 }) => {
+  const [activeExtraModal, setActiveExtraModal] = useState<'Wide' | 'NoBall' | 'Bye' | 'LegBye' | null>(null);
+
+  const handleExtraClick = (type: 'Wide' | 'NoBall' | 'Bye' | 'LegBye') => {
+    setActiveExtraModal((prev) => (prev === type ? null : type));
+  };
+
+  const handleSelectRuns = (runs: number) => {
+    if (!activeExtraModal) return;
+    if (activeExtraModal === 'Wide') {
+      onScoreExtra('Wide', runs, 0);
+    } else if (activeExtraModal === 'NoBall') {
+      // For NoBall, runs could be runs off bat (like web app)
+      onScoreExtra('NoBall', 0, runs);
+    } else if (activeExtraModal === 'Bye') {
+      onScoreExtra('Bye', runs, 0);
+    } else if (activeExtraModal === 'LegBye') {
+      onScoreExtra('LegBye', runs, 0);
+    }
+    setActiveExtraModal(null);
+  };
+
   const runButtons = [
     { label: '0', sub: 'Dot', runs: 0, bg: 'bg-slate-800', border: 'border-slate-700', text: 'text-slate-400' },
     { label: '1', sub: 'Single', runs: 1, bg: 'bg-sky-950/60', border: 'border-sky-600', text: 'text-sky-400' },
@@ -57,8 +78,12 @@ export const Keypad: React.FC<KeypadProps> = ({
       {/* Extras Quick Row */}
       <View className="flex-row justify-between gap-1.5">
         <TouchableOpacity
-          className="flex-1 h-12 rounded-xl bg-amber-950/70 border border-amber-500 items-center justify-center"
-          onPress={() => onScoreExtra('Wide', 0)}
+          className={`flex-1 h-12 rounded-xl items-center justify-center border ${
+            activeExtraModal === 'Wide'
+              ? 'bg-amber-600/40 border-amber-400'
+              : 'bg-amber-950/70 border-amber-500'
+          }`}
+          onPress={() => handleExtraClick('Wide')}
           disabled={submitting}
           activeOpacity={0.7}
         >
@@ -67,33 +92,45 @@ export const Keypad: React.FC<KeypadProps> = ({
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="flex-1 h-12 rounded-xl bg-amber-950/70 border border-amber-500 items-center justify-center"
-          onPress={() => onScoreExtra('NoBall', 0)}
+          className={`flex-1 h-12 rounded-xl items-center justify-center border ${
+            activeExtraModal === 'NoBall'
+              ? 'bg-yellow-600/40 border-yellow-400'
+              : 'bg-yellow-950/70 border-yellow-500'
+          }`}
+          onPress={() => handleExtraClick('NoBall')}
           disabled={submitting}
           activeOpacity={0.7}
         >
-          <Text className="text-amber-400 font-extrabold text-sm">NB</Text>
+          <Text className="text-yellow-400 font-extrabold text-sm">NB</Text>
           <Text className="text-slate-300 font-bold text-[9px] -mt-0.5">+{noBallPenaltyRuns} NoBall</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="flex-1 h-12 rounded-xl bg-emerald-950/70 border border-emerald-500 items-center justify-center"
-          onPress={() => onScoreExtra('Bye', 1)}
+          className={`flex-1 h-12 rounded-xl items-center justify-center border ${
+            activeExtraModal === 'Bye'
+              ? 'bg-emerald-600/40 border-emerald-400'
+              : 'bg-emerald-950/70 border-emerald-500'
+          }`}
+          onPress={() => handleExtraClick('Bye')}
           disabled={submitting}
           activeOpacity={0.7}
         >
           <Text className="text-emerald-400 font-extrabold text-sm">BYE</Text>
-          <Text className="text-slate-300 font-bold text-[9px] -mt-0.5">1 Run</Text>
+          <Text className="text-slate-300 font-bold text-[9px] -mt-0.5">Extra</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="flex-1 h-12 rounded-xl bg-emerald-950/70 border border-emerald-500 items-center justify-center"
-          onPress={() => onScoreExtra('LegBye', 1)}
+          className={`flex-1 h-12 rounded-xl items-center justify-center border ${
+            activeExtraModal === 'LegBye'
+              ? 'bg-indigo-600/40 border-indigo-400'
+              : 'bg-indigo-950/70 border-indigo-500'
+          }`}
+          onPress={() => handleExtraClick('LegBye')}
           disabled={submitting}
           activeOpacity={0.7}
         >
-          <Text className="text-emerald-400 font-extrabold text-sm">LB</Text>
-          <Text className="text-slate-300 font-bold text-[9px] -mt-0.5">1 Run</Text>
+          <Text className="text-indigo-400 font-extrabold text-sm">LB</Text>
+          <Text className="text-slate-300 font-bold text-[9px] -mt-0.5">Extra</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -106,6 +143,48 @@ export const Keypad: React.FC<KeypadProps> = ({
           <Text className="text-slate-400 font-bold text-[9px] -mt-0.5">More</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Extra Runs Quick Selector Modal/Overlay matching Web App */}
+      {activeExtraModal && (
+        <View className="p-3 bg-slate-900 border border-amber-400/40 rounded-2xl gap-2">
+          <View className="flex-row items-center justify-between pb-1.5 border-b border-white/10">
+            <View className="flex-row items-center gap-1.5 flex-1 pr-2">
+              <Ionicons
+                name={activeExtraModal === 'Wide' ? 'warning' : 'flash'}
+                size={14}
+                color={activeExtraModal === 'Wide' ? '#f59e0b' : '#eab308'}
+              />
+              <Text className="text-xs font-bold text-amber-300 flex-1" numberOfLines={1}>
+                {activeExtraModal === 'Wide' && `Wide (+${widePenaltyRuns} Penalty) + Additional Runs`}
+                {activeExtraModal === 'NoBall' && `No-Ball (+${noBallPenaltyRuns} Penalty) + Runs Off Bat`}
+                {activeExtraModal === 'Bye' && 'Byes Conceded'}
+                {activeExtraModal === 'LegBye' && 'Leg-Byes Conceded'}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => setActiveExtraModal(null)}
+              className="px-2 py-0.5 rounded-lg bg-slate-800 border border-slate-700"
+              activeOpacity={0.7}
+            >
+              <Text className="text-slate-400 font-bold text-[11px]">✕ Cancel</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View className="flex-row justify-between gap-1.5">
+            {[0, 1, 2, 3, 4, 6].map((r) => (
+              <TouchableOpacity
+                key={r}
+                className="flex-1 h-11 rounded-xl bg-slate-800 border border-slate-700 items-center justify-center active:bg-sky-600"
+                onPress={() => handleSelectRuns(r)}
+                disabled={submitting}
+                activeOpacity={0.7}
+              >
+                <Text className="text-white font-mono font-black text-sm">+{r}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      )}
 
       {/* Main Action Bar (Undo, Swap Strike, Wicket) */}
       <View className="flex-row items-center gap-2 mt-0.5">

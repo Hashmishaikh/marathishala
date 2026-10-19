@@ -54,12 +54,12 @@ export const OverTimeline: React.FC<OverTimelineProps> = ({
   const getBallText = (d: Delivery) => {
     if (d.isWicket) return 'W';
     if (d.extraType === 'Wide') {
-      const extra = (d.penaltyExtraRuns || 1) + (d.runningExtraRuns || 0);
-      return extra > 1 ? `${extra}Wd` : 'Wd';
+      const extra = (d.penaltyExtraRuns !== undefined ? d.penaltyExtraRuns : 1) + (d.runningExtraRuns || 0);
+      return extra === 1 ? 'Wd' : `${extra}Wd`;
     }
     if (d.extraType === 'NoBall') {
-      const runs = (d.runsOffBat || 0) + (d.penaltyExtraRuns || 1) + (d.runningExtraRuns || 0);
-      return runs > 1 ? `${runs}Nb` : 'Nb';
+      const runs = (d.runsOffBat || 0) + (d.penaltyExtraRuns !== undefined ? d.penaltyExtraRuns : 1) + (d.runningExtraRuns || 0);
+      return runs === 1 ? 'Nb' : `${runs}Nb`;
     }
     if (d.extraType === 'Bye') return `${d.runningExtraRuns || 1}B`;
     if (d.extraType === 'LegBye') return `${d.runningExtraRuns || 1}LB`;

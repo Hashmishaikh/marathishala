@@ -1,21 +1,31 @@
 import React, { useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import type { CustomRules } from '../../types';
 
 interface ExtrasModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirmExtra: (extraType: 'Wide' | 'NoBall' | 'Bye' | 'LegBye', runningRuns?: number, runsOffBat?: number) => void;
+  customRules?: CustomRules;
 }
 
 export const ExtrasModal: React.FC<ExtrasModalProps> = ({
   isOpen,
   onClose,
   onConfirmExtra,
+  customRules,
 }) => {
   const [selectedExtra, setSelectedExtra] = useState<'Wide' | 'NoBall' | 'Bye' | 'LegBye'>('Wide');
   const [runningRuns, setRunningRuns] = useState<number>(0);
   const [runsOffBat, setRunsOffBat] = useState<number>(0);
+
+  const penaltyRuns = selectedExtra === 'Wide'
+    ? (customRules?.widePenaltyRuns ?? 1)
+    : selectedExtra === 'NoBall'
+    ? (customRules?.noBallPenaltyRuns ?? 1)
+    : 0;
+  const totalExtraDeliveryRuns = penaltyRuns + runsOffBat + runningRuns;
 
   const handleConfirm = () => {
     onConfirmExtra(selectedExtra, runningRuns, runsOffBat);
@@ -97,7 +107,7 @@ export const ExtrasModal: React.FC<ExtrasModalProps> = ({
           <View style={styles.summaryBox}>
             <Text style={styles.summaryLabel}>Total Delivery Impact:</Text>
             <Text style={styles.summaryValue}>
-              {selectedExtra} + {runsOffBat + runningRuns} runs
+              {selectedExtra} (+{penaltyRuns} rule penalty) + {runsOffBat + runningRuns} addl = {totalExtraDeliveryRuns} runs
             </Text>
           </View>
 

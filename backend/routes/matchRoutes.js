@@ -303,8 +303,34 @@ router.put('/:id', async (req, res) => {
 
     if (title) match.title = title;
     if (venue) match.venue = venue;
-    if (totalOvers) match.totalOvers = totalOvers;
+    if (totalOvers !== undefined) match.totalOvers = Number(totalOvers);
     if (status) match.status = status;
+
+    if (customRules) {
+      if (!match.customRules) {
+        match.customRules = {};
+      }
+      if (customRules.widePenaltyRuns !== undefined) {
+        match.customRules.widePenaltyRuns = Number(customRules.widePenaltyRuns);
+      }
+      if (customRules.noBallPenaltyRuns !== undefined) {
+        match.customRules.noBallPenaltyRuns = Number(customRules.noBallPenaltyRuns);
+      }
+      if (customRules.allOutThresholdType !== undefined) {
+        match.customRules.allOutThresholdType = customRules.allOutThresholdType;
+      }
+      if (customRules.allowDoubleBatting !== undefined) {
+        match.customRules.allowDoubleBatting = Boolean(customRules.allowDoubleBatting);
+      }
+      if (customRules.oppositeHandRule !== undefined) {
+        match.customRules.oppositeHandRule = Boolean(customRules.oppositeHandRule);
+      }
+      if (customRules.lastManStandsAlone !== undefined) {
+        match.customRules.lastManStandsAlone = Boolean(customRules.lastManStandsAlone);
+      }
+      match.markModified('customRules');
+    }
+
     if (teamA) {
       match.teamA = { 
         ...match.teamA.toObject(), 
@@ -322,8 +348,48 @@ router.put('/:id', async (req, res) => {
       };
     }
 
+    // If allOutThresholdType or squads were updated, sync innings maxWicketsForInnings for active innings
+    if (customRules?.allOutThresholdType || teamA || teamB) {
+      const allOutType = match.customRules?.allOutThresholdType || 'AllPlayersOut';
+      const teamAPlayerCount = match.teamA?.players?.length || 11;
+      const teamBPlayerCount = match.teamB?.players?.length || 11;
+
+      if (!teamA?.maxWickets) {
+        match.teamA.maxWickets = allOutType === 'AllPlayersOut' ? teamAPlayerCount : Math.max(1, teamAPlayerCount - 1);
+      }
+      if (!teamB?.maxWickets) {
+        match.teamB.maxWickets = allOutType === 'AllPlayersOut' ? teamBPlayerCount : Math.max(1, teamBPlayerCount - 1);
+      }
+
+      if (match.innings && match.innings.length > 0) {
+        match.innings.forEach(inn => {
+          const isTeamA = inn.battingTeam && inn.battingTeam.toString() === match.teamA.teamId.toString();
+          inn.maxWicketsForInnings = isTeamA ? match.teamA.maxWickets : match.teamB.maxWickets;
+        });
+        match.markModified('innings');
+      }
+    }
+
     const updated = await match.save();
-    const populated = await Match.findById(updated._id).populate('teamA.teamId teamB.teamId teamA.players teamB.players');
+    const populated = await Match.findById(updated._id).populate([
+      { path: 'seriesId' },
+      { path: 'teamA.teamId' },
+      { path: 'teamB.teamId' },
+      { path: 'teamA.players' },
+      { path: 'teamB.players' },
+      { path: 'toss.winner' },
+      { path: 'result.winner' },
+      { path: 'innings.battingTeam' },
+      { path: 'innings.bowlingTeam' },
+      { path: 'innings.striker' },
+      { path: 'innings.nonStriker' },
+      { path: 'innings.currentBowler' },
+      { path: 'innings.batsmenStats.player' },
+      { path: 'innings.batsmenStats.bowler' },
+      { path: 'innings.batsmenStats.fielder' },
+      { path: 'innings.bowlerStats.player' },
+      { path: 'innings.fallOfWickets.playerOut' }
+    ]);
     broadcastMatchUpdate(match._id.toString(), 'match_updated', populated);
     res.json(populated);
   } catch (error) {

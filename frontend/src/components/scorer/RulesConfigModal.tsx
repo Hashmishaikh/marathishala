@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from '../common/Modal';
 
 import type { Match, CustomRules } from '../../types';
@@ -25,6 +25,20 @@ export const RulesConfigModal: React.FC<RulesConfigModalProps> = ({
     oppositeHandRule: match.customRules?.oppositeHandRule ?? true,
     lastManStandsAlone: match.customRules?.lastManStandsAlone ?? true,
   });
+
+  useEffect(() => {
+    if (isOpen && match) {
+      setTotalOvers(match.totalOvers || 8);
+      setRules({
+        widePenaltyRuns: match.customRules?.widePenaltyRuns ?? 1,
+        noBallPenaltyRuns: match.customRules?.noBallPenaltyRuns ?? 1,
+        allOutThresholdType: match.customRules?.allOutThresholdType ?? 'AllPlayersOut',
+        allowDoubleBatting: match.customRules?.allowDoubleBatting ?? true,
+        oppositeHandRule: match.customRules?.oppositeHandRule ?? true,
+        lastManStandsAlone: match.customRules?.lastManStandsAlone ?? true,
+      });
+    }
+  }, [isOpen, match]);
 
   const handleSave = () => {
     onSaveRules(rules, totalOvers);

@@ -328,6 +328,8 @@ export const AdminScorerScreen: React.FC<AdminScorerScreenProps> = ({
               onUndo={() => undoBall(match.currentInningsNumber)}
               onSwapStrike={() => swapEnds(match.currentInningsNumber)}
               submitting={submitting}
+              widePenaltyRuns={match.customRules?.widePenaltyRuns ?? 1}
+              noBallPenaltyRuns={match.customRules?.noBallPenaltyRuns ?? 1}
             />
           </View>
         )}
@@ -345,6 +347,7 @@ export const AdminScorerScreen: React.FC<AdminScorerScreenProps> = ({
         isOpen={isExtrasModalOpen}
         onClose={() => setIsExtrasModalOpen(false)}
         onConfirmExtra={handleScoreExtra}
+        customRules={match.customRules}
       />
 
       <BatsmanPickerModal

@@ -30,12 +30,12 @@ export const OverTimeline: React.FC<OverTimelineProps> = ({
       return { label: 'W', className: 'ball-dot-wicket', desc: 'WICKET' };
     }
     if (del.extraType === 'Wide') {
-      const runs = (del.penaltyExtraRuns || 0) + (del.runningExtraRuns || 0);
-      return { label: runs > 1 ? `Wd+${runs - 1}` : 'Wd', className: 'ball-dot-wide', desc: 'WIDE' };
+      const runs = (del.penaltyExtraRuns !== undefined ? del.penaltyExtraRuns : 1) + (del.runningExtraRuns || 0);
+      return { label: runs === 1 ? 'Wd' : `${runs}Wd`, className: 'ball-dot-wide', desc: 'WIDE' };
     }
     if (del.extraType === 'NoBall') {
-      const runs = (del.runsOffBat || 0) + (del.penaltyExtraRuns || 0);
-      return { label: runs > 1 ? `Nb+${runs - 1}` : 'Nb', className: 'ball-dot-noball', desc: 'NO BALL' };
+      const runs = (del.runsOffBat || 0) + (del.penaltyExtraRuns !== undefined ? del.penaltyExtraRuns : 1) + (del.runningExtraRuns || 0);
+      return { label: runs === 1 ? 'Nb' : `${runs}Nb`, className: 'ball-dot-noball', desc: 'NO BALL' };
     }
     if (del.extraType === 'Bye') {
       return { label: `B${del.runningExtraRuns}`, className: 'ball-dot-1', desc: 'BYE' };

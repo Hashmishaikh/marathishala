@@ -10,6 +10,8 @@ interface KeypadProps {
   onUndo: () => void;
   onSwapStrike: () => void;
   submitting?: boolean;
+  widePenaltyRuns?: number;
+  noBallPenaltyRuns?: number;
 }
 
 export const Keypad: React.FC<KeypadProps> = ({
@@ -20,6 +22,8 @@ export const Keypad: React.FC<KeypadProps> = ({
   onUndo,
   onSwapStrike,
   submitting = false,
+  widePenaltyRuns = 1,
+  noBallPenaltyRuns = 1,
 }) => {
   const runButtons = [
     { label: '0', sub: 'Dot', runs: 0, bg: 'bg-slate-800', border: 'border-slate-700', text: 'text-slate-400' },
@@ -59,7 +63,7 @@ export const Keypad: React.FC<KeypadProps> = ({
           activeOpacity={0.7}
         >
           <Text className="text-amber-400 font-extrabold text-sm">WD</Text>
-          <Text className="text-slate-300 font-bold text-[9px] -mt-0.5">+1 Wide</Text>
+          <Text className="text-slate-300 font-bold text-[9px] -mt-0.5">+{widePenaltyRuns} Wide</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -69,7 +73,7 @@ export const Keypad: React.FC<KeypadProps> = ({
           activeOpacity={0.7}
         >
           <Text className="text-amber-400 font-extrabold text-sm">NB</Text>
-          <Text className="text-slate-300 font-bold text-[9px] -mt-0.5">+1 NoBall</Text>
+          <Text className="text-slate-300 font-bold text-[9px] -mt-0.5">+{noBallPenaltyRuns} NoBall</Text>
         </TouchableOpacity>
 
         <TouchableOpacity

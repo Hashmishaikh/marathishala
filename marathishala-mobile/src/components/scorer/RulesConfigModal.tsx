@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   View,
@@ -35,6 +35,19 @@ export const RulesConfigModal: React.FC<RulesConfigModalProps> = ({
     }
   );
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && match?.customRules) {
+      setRules({
+        widePenaltyRuns: match.customRules.widePenaltyRuns ?? 1,
+        noBallPenaltyRuns: match.customRules.noBallPenaltyRuns ?? 1,
+        allOutThresholdType: match.customRules.allOutThresholdType ?? 'AllPlayersOut',
+        allowDoubleBatting: match.customRules.allowDoubleBatting ?? false,
+        oppositeHandRule: match.customRules.oppositeHandRule ?? false,
+        lastManStandsAlone: match.customRules.lastManStandsAlone ?? false,
+      });
+    }
+  }, [isOpen, match]);
 
   const handleSave = async () => {
     try {

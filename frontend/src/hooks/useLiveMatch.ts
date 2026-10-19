@@ -89,6 +89,10 @@ export function useLiveMatch(matchId: string | undefined) {
       setMatch(updatedMatch);
     });
 
+    newSocket.on('match_updated', (updatedMatch: Match) => {
+      setMatch(updatedMatch);
+    });
+
     newSocket.on('match_completed', (updatedMatch: Match) => {
       setMatch(updatedMatch);
       confetti({

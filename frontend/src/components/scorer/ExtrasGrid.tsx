@@ -7,6 +7,8 @@ interface ExtrasGridProps {
   onUndo: () => void;
   onSwapStrike: () => void;
   disabled?: boolean;
+  widePenaltyRuns?: number;
+  noBallPenaltyRuns?: number;
 }
 
 export const ExtrasGrid: React.FC<ExtrasGridProps> = ({
@@ -14,7 +16,9 @@ export const ExtrasGrid: React.FC<ExtrasGridProps> = ({
   onOpenWicketModal,
   onUndo,
   onSwapStrike,
-  disabled = false
+  disabled = false,
+  widePenaltyRuns = 1,
+  noBallPenaltyRuns = 1,
 }) => {
   const [activeExtraModal, setActiveExtraModal] = useState<'Wide' | 'NoBall' | 'Bye' | 'LegBye' | null>(null);
 
@@ -47,7 +51,7 @@ export const ExtrasGrid: React.FC<ExtrasGridProps> = ({
           className="keypad-btn py-3 px-2 bg-amber-950/50 hover:bg-amber-900/60 text-amber-300 border-amber-700/50 text-xs sm:text-sm font-bold disabled:opacity-40"
         >
           <span className="font-mono text-base sm:text-lg font-black">WD</span>
-          <span className="text-[10px] opacity-75">WIDE</span>
+          <span className="text-[10px] opacity-75">+{widePenaltyRuns} WIDE</span>
         </button>
 
         <button
@@ -56,7 +60,7 @@ export const ExtrasGrid: React.FC<ExtrasGridProps> = ({
           className="keypad-btn py-3 px-2 bg-yellow-950/50 hover:bg-yellow-900/60 text-yellow-300 border-yellow-700/50 text-xs sm:text-sm font-bold disabled:opacity-40"
         >
           <span className="font-mono text-base sm:text-lg font-black">NB</span>
-          <span className="text-[10px] opacity-75">NO BALL</span>
+          <span className="text-[10px] opacity-75">+{noBallPenaltyRuns} NO BALL</span>
         </button>
 
         <button
@@ -115,8 +119,8 @@ export const ExtrasGrid: React.FC<ExtrasGridProps> = ({
         <div className="p-3 bg-slate-900/95 border border-white/15 rounded-xl animate-in fade-in zoom-in-95 duration-150">
           <div className="flex items-center justify-between mb-2 pb-1 border-b border-white/10">
             <span className="text-xs font-bold text-amber-300">
-              {activeExtraModal === 'Wide' && 'Wide Delivery + Additional Runs Run'}
-              {activeExtraModal === 'NoBall' && 'No-Ball Delivery + Runs Off Bat'}
+              {activeExtraModal === 'Wide' && `Wide (+${widePenaltyRuns} Penalty) + Additional Runs`}
+              {activeExtraModal === 'NoBall' && `No-Ball (+${noBallPenaltyRuns} Penalty) + Runs Off Bat`}
               {activeExtraModal === 'Bye' && 'Byes Conceded'}
               {activeExtraModal === 'LegBye' && 'Leg-Byes Conceded'}
             </span>

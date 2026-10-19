@@ -408,6 +408,8 @@ export const AdminScorerScreen: React.FC<AdminScorerScreenProps> = ({ matchId })
               onUndo={() => undoBall(match.currentInningsNumber)}
               onSwapStrike={() => swapEnds(match.currentInningsNumber)}
               disabled={submitting}
+              widePenaltyRuns={match.customRules?.widePenaltyRuns ?? 1}
+              noBallPenaltyRuns={match.customRules?.noBallPenaltyRuns ?? 1}
             />
           </div>
 
